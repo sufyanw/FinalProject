@@ -64,22 +64,19 @@ elif selected == 'Visualization':
     with tab2:
         st.subheader("Geographic Heatmap of Median House Value")
 
-        # Define color based on price range
         def price_to_color(value):
             if value < 150000:
-                return [255, 0, 0]  # Red
+                return [255, 0, 0]
             elif value < 300000:
-                return [0, 0, 255]  # Blue
+                return [0, 0, 255]
             else:
-                return [0, 255, 0]  # Green
+                return [0, 255, 0] 
 
-        # Add color and size columns to the dataframe
         df['color'] = df['median_house_value'].apply(price_to_color)
         df['size'] = (df['median_house_value'] - df['median_house_value'].min()) / (
             df['median_house_value'].max() - df['median_house_value'].min()
         ) * 100
 
-        # Create a Pydeck map
         import pydeck as pdk
 
         layer = pdk.Layer(
