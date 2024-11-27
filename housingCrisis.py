@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 from streamlit_option_menu import option_menu
 
-st.set_page_config(page_title='California Housing Crisis App')
+st.set_page_config(page_title='Housing Crisis App')
 
 df = pd.read_csv("housing.csv")
 
