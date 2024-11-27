@@ -77,7 +77,7 @@ elif selected == 'Visualization':
         df['color'] = df['median_house_value'].apply(price_to_color)
         df['size'] = (df['median_house_value'] - df['median_house_value'].min()) / (
             df['median_house_value'].max() - df['median_house_value'].min()
-        ) * 100  # Normalize size to scale between 0 and 100
+        ) * 100
 
         # Create a Pydeck map
         import pydeck as pdk
