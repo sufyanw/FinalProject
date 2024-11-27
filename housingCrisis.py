@@ -11,19 +11,15 @@ from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 from streamlit_option_menu import option_menu
 
-# Page Configuration
 st.set_page_config(page_title='California Housing Crisis App')
 
-# Load Dataset
 df = pd.read_csv("housing.csv")
 
 # import dagshub
 # dagshub.init(repo_owner='sufyanw', repo_name='HousingCrisisFinalProject', mlflow=True)
 
-# Fill in missing values in dataset with the median value
 df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
 
-# Navigation Menu
 selected = option_menu(
     menu_title=None,
     options=["Introduction", "Visualization", "Prediction", "MLFlow", "Explainable AI", "Conclusion"],
@@ -32,7 +28,6 @@ selected = option_menu(
     orientation="horizontal",
 )
 
-# Pages
 if selected == 'Introduction':
     st.title("Housing Crisis 🏠")
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -67,37 +62,32 @@ elif selected == 'Visualization':
         ax.set_title("Distribution of Housing Prices")
         st.pyplot(fig)
 
-
     with tab2:
         st.subheader("Geographic Heatmap of Median House Value")
 
-        # Define color gradient using sns.cubehelix_palette
-        cubehelix_cmap = sns.cubehelix_palette(start=2, rot=0, dark=0, light=0.95, reverse=True, as_cmap=True)
+        # Define color based on price range
+        def price_to_color(value):
+            if value < 150000:
+                return [255, 0, 0]  # Red
+            elif value < 300000:
+                return [0, 0, 255]  # Blue
+            else:
+                return [0, 255, 0]  # Green
 
-        # Normalize the values to map them onto the cubehelix palette
-        min_value = df['median_house_value'].min()
-        max_value = df['median_house_value'].max()
-
-        # Normalize the median house values between 0 and 1
-        df['normalized_value'] = (df['median_house_value'] - min_value) / (max_value - min_value)
-
-        # Map the normalized values to the cubehelix color palette
-        # Convert the color values to [0, 255] scale
-        def get_rgb_color(value):
-            rgba = cubehelix_cmap(value)  # Returns a tuple like (R, G, B, A) where each value is in [0, 1]
-            return [int(c * 255) for c in rgba[:3]]  # Convert to RGB by scaling and truncating A
-
-        df['color'] = df['normalized_value'].apply(get_rgb_color)
-
-        # Set size of the points based on normalized price
-        df['size'] = df['normalized_value'] * 100  # Normalize size to scale between 0 and 100
+        # Add color and size columns to the dataframe
+        df['color'] = df['median_house_value'].apply(price_to_color)
+        df['size'] = (df['median_house_value'] - df['median_house_value'].min()) / (
+            df['median_house_value'].max() - df['median_house_value'].min()
+        ) * 100  # Normalize size to scale between 0 and 100
 
         # Create a Pydeck map
+        import pydeck as pdk
+
         layer = pdk.Layer(
             "ScatterplotLayer",
             data=df,
             get_position=["longitude", "latitude"],
-            get_fill_color="color",  # Pydeck expects color to be an RGB list
+            get_fill_color="color",
             get_radius="size",
             radius_scale=10,
             pickable=True,
@@ -117,7 +107,6 @@ elif selected == 'Visualization':
         )
 
         st.pydeck_chart(map)
-
 
     with tab3:
         st.subheader("Correlation Heatmap")
