@@ -15,7 +15,12 @@ st.set_page_config(page_title='Housing Crisis App')
 df = pd.read_csv("housing.csv")
 
 # import dagshub
-# dagshub.init(repo_owner='sufyanw', repo_name='HousingCrisisFinalProject', mlflow=True)
+# dagshub.init(repo_owner='sufyanw', repo_name='FinalProject', mlflow=True)
+
+# import mlflow
+# with mlflow.start_run():
+#   mlflow.log_param('parameter name', 'value')
+#   mlflow.log_metric('metric name', 1)
 
 df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
 
