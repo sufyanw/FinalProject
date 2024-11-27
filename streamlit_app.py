@@ -67,22 +67,22 @@ elif selected == 'Visualization':
         st.pyplot(fig)
 
     with tab2:
-        st.subheader("Geographic Heatmap of Median House Value")
+        st.subheader("Geographic Heatmap of House Values")
 
-        def price_to_color(value):
-            if value < 150000:
-                return [255, 0, 0]
-            elif value < 300000:
-                return [0, 0, 255]
-            else:
-                return [0, 255, 0] 
+        cubehelix_cmap = sns.cubehelix_palette(start=2, rot=0, dark=0, light=0.95, reverse=True, as_cmap=True)
 
-        df['color'] = df['median_house_value'].apply(price_to_color)
-        df['size'] = (df['median_house_value'] - df['median_house_value'].min()) / (
-            df['median_house_value'].max() - df['median_house_value'].min()
-        ) * 100
+        min_value = df['median_house_value'].min()
+        max_value = df['median_house_value'].max()
 
-        import pydeck as pdk
+        df['normalized_value'] = (df['median_house_value'] - min_value) / (max_value - min_value)
+
+        def get_rgb_color(value):
+            rgba = cubehelix_cmap(value)
+            return [int(c * 255) for c in rgba[:3]] 
+
+        df['color'] = df['normalized_value'].apply(get_rgb_color)
+
+        df['size'] = df['normalized_value'] * 100
 
         layer = pdk.Layer(
             "ScatterplotLayer",
