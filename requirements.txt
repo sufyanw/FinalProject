@@ -1,1 +1,10 @@
 streamlit
+pandas
+numpy
+pillow
+seaborn
+matplotlib
+scikit-learn
+streamlit-option-menu
+# dagshub
+pydeck
