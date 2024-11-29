@@ -282,6 +282,51 @@ elif selected == "MLFlow":
 
 elif selected == "Explainable AI":
     st.title("Explainable AI 🔎🤖")
+    st.write("""
+    This pip install shapash
+ion uses **Shapash**, an explainability library, to provide insights into the predictions made by the housing price prediction model.
+    """)
+
+    from shapash.explainer.smart_explainer import SmartExplainer
+    import random
+
+    df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
+
+    X = df[['median_income', 'total_rooms', 'housing_median_age', 'total_bedrooms', 'population', 'households']]
+    y = df['median_house_value']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+    model = RandomForestRegressor(max_depth=10, random_state=42, n_estimators=100)
+    model.fit(X_train, y_train)
+
+    option = st.selectbox(
+        'What would you like to explore❓',
+        ('Feature Importance', 'Feature Contribution', 'Local Explanation')
+    )
+
+    xpl = SmartExplainer(model=model)
+    xpl.compile(x=X_test, y_pred=model.predict(X_test), features_dict={col: col for col in X.columns})
+
+    if option == 'Feature Importance':
+        st.write("### Feature Importance")
+        fig = xpl.plot.features_importance(title="Feature Importance in Predicting Housing Prices")
+        st.pyplot(fig.figure)
+
+    if option == 'Feature Contribution':
+        st.write("### Feature Contribution")
+        feature_list = X_test.columns.tolist()
+        selected_feature = st.selectbox('Select a feature to analyze its contribution:', feature_list)
+        fig = xpl.plot.contribution_plot(selected_feature, title=f"Contribution of {selected_feature}")
+        st.pyplot(fig.figure)
+
+    if option == 'Local Explanation':
+        st.write("### Local Explanation")
+        random_index = random.choice(X_test.index)
+        st.write(f"Local explanation for index: {random_index}")
+        fig = xpl.plot.local_plot(index=random_index, title=f"Local Explanation for Index {random_index}")
+        st.pyplot(fig.figure)
+
 
 elif selected == 'Conclusion':
     st.title("Conclusion 🏁")
