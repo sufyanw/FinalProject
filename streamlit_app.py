@@ -11,6 +11,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 from streamlit_option_menu import option_menu
 from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
 
 st.set_page_config(page_title='Housing Crisis App')
 
