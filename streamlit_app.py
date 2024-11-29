@@ -13,6 +13,7 @@ from streamlit_option_menu import option_menu
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix, classification_report
 
 st.set_page_config(page_title='Housing Crisis App')
 
