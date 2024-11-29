@@ -23,7 +23,6 @@ df = pd.read_csv("housing.csv")
 #   mlflow.log_param('parameter name', 'value')
 #   mlflow.log_metric('metric name', 1)
 
-df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
 
 selected = option_menu(
     menu_title=None,
@@ -75,6 +74,7 @@ elif selected == 'Exploration':
         st.dataframe(df.describe())
 
     with tab4:
+        df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
         st.subheader("Missing values")
         dfnull = df.isnull()/len(df)*100
         total_missing = dfnull.sum().round(2)
