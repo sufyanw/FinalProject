@@ -27,7 +27,7 @@ df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
 
 selected = option_menu(
     menu_title=None,
-    options=["Introduction", "Exploration" "Visualization", "Prediction", "MLFlow", "Explainable AI", "Conclusion"],
+    options=["Introduction", "Exploration", "Visualization", "Prediction", "MLFlow", "Explainable AI", "Conclusion"],
     icons=["house", "search","bar-chart-line", "lightbulb", "cloud", "robot", "check-circle"],
     default_index=0,
     orientation="horizontal",
