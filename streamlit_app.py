@@ -98,7 +98,7 @@ elif selected == 'Exploration':
 
 elif selected == 'Visualization':
     st.title("Data Visualization 📊")
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Price Distribution", "Geographic Heatmap", "Correlation Heatmap", "Feature Relationships"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Price Distribution", "Geographic Heatmap", "Correlation Heatmap", "Feature Relationships"])
 
     with tab1:
         st.subheader("Price Distribution")
