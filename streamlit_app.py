@@ -78,7 +78,7 @@ elif selected == 'Exploration':
         st.dataframe(df.describe())
 
     with tab4:
-        df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
+        # df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
         st.subheader("Missing values")
         dfnull = df.isnull()/len(df)*100
         total_missing = dfnull.sum().round(2)
@@ -173,7 +173,7 @@ elif selected == 'Visualization':
         st.pyplot(fig)
 
 elif selected == "Prediction":
-    df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
+    # df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
     st.title("Predicting Housing Prices and Categories 💡")
     
     tab1, tab2 = st.tabs(["Linear Regression", "KNN Confusion Matrix"])
@@ -243,7 +243,7 @@ elif selected == "Prediction":
 
 
 elif selected == "MLFlow":
-    df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
+    # df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
     st.title("MLFlow Integration 🌩️")
     st.write("""
     ## Model Tracking with MLFlow
