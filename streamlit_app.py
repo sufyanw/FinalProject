@@ -12,6 +12,7 @@ from sklearn import metrics
 from streamlit_option_menu import option_menu
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 
 st.set_page_config(page_title='Housing Crisis App')
 
