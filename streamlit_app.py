@@ -170,28 +170,73 @@ elif selected == 'Visualization':
 
 elif selected == "Prediction":
     df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
-    st.title("Predicting Housing Prices 💡")
-    numeric_columns = df.select_dtypes(include=[np.number]).columns
-    features = st.multiselect("Select Features for Prediction", numeric_columns)
-    target = st.selectbox("Select Target Variable", ["median_house_value"])
+    st.title("Predicting Housing Prices and Categories 💡")
+    
+    tab1, tab2 = st.tabs(["Linear Regression", "KNN Confusion Matrix"])
+    
+    with tab1:
+        numeric_columns = df.select_dtypes(include=[np.number]).columns
+        features = st.multiselect("Select Features for Prediction", numeric_columns)
+        target = st.selectbox("Select Target Variable", ["median_house_value"])
 
-    if features:
-        X = df[features]
-        y = df[target]
-        test_size = st.slider("Test Size (%)", 10, 50, 20) / 100
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
-        
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-        predictions = model.predict(X_test)
+        if features:
+            X = df[features]
+            y = df[target]
+            test_size = st.slider("Test Size (%)", 10, 50, 20) / 100
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+            
+            model = LinearRegression()
+            model.fit(X_train, y_train)
+            predictions = model.predict(X_test)
 
-        mae = metrics.mean_absolute_error(y_test, predictions)
-        mae = mae/100000
-        r2 = metrics.r2_score(y_test, predictions)
+            mae = metrics.mean_absolute_error(y_test, predictions)
+            mae = mae / 100000
+            r2 = metrics.r2_score(y_test, predictions)
+            
+            st.write("### Prediction Results")
+            st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
+            st.write(f"R² Score: {r2:.2f}")
+    
+    with tab2:
+        df['price_category'] = pd.cut(df['median_house_value'], 
+                                      bins=[0, 100000, 200000, 300000, 400000, 500000, float('inf')],
+                                      labels=[0, 1, 2, 3, 4, 5])
+        X = df[['median_income', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households']]
+        y = df['price_category']
+
+        X = pd.get_dummies(X)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_test_scaled = scaler.transform(X_test)
+
+        knn = KNeighborsClassifier(n_neighbors=3)
+        knn.fit(X_train_scaled, y_train)
+        y_pred = knn.predict(X_test_scaled)
+
+        accuracy = accuracy_score(y_test, y_pred)
+        st.write(f"### KNN Model Accuracy: {accuracy * 100:.2f}%")
         
-        st.write("### Prediction Results")
-        st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
-        st.write(f"R² Score: {r2:.2f}")
+        option = st.selectbox(
+            'What would you like to explore?',
+            ('Confusion Matrix 📈', 'Classification Report 📑')
+        )
+
+        if option == 'Confusion Matrix 📈':
+            conf_matrix = confusion_matrix(y_test, y_pred)
+            plt.figure(figsize=(10, 8))
+            sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", xticklabels=knn.classes_, yticklabels=knn.classes_)
+            plt.xlabel('Predicted Labels')
+            plt.ylabel('True Labels')
+            plt.title('Confusion Matrix: KNN Model Prediction')
+            st.pyplot(plt)
+
+        elif option == 'Classification Report 📑':
+            report = pd.DataFrame(classification_report(y_test, y_pred, output_dict=True)).transpose()
+            st.text('Classification Report:')
+            st.table(report)
+
 
 elif selected == "MLFlow":
     df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
