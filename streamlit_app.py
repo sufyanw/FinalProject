@@ -185,6 +185,7 @@ elif selected == "Prediction":
         predictions = model.predict(X_test)
 
         mae = metrics.mean_absolute_error(y_test, predictions)
+        mae = mae/1000
         r2 = metrics.r2_score(y_test, predictions)
         
         st.write("### Prediction Results")
