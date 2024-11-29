@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 from streamlit_option_menu import option_menu
+from sklearn.preprocessing import StandardScaler
 
 st.set_page_config(page_title='Housing Crisis App')
 
