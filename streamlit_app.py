@@ -194,6 +194,7 @@ elif selected == "Prediction":
         st.write(f"R² Score: {r2:.2f}")
 
 elif selected == "MLFlow":
+    df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
     st.title("MLFlow Integration 🌩️")
     st.write("""
     ## Model Tracking with MLFlow
