@@ -169,6 +169,7 @@ elif selected == 'Visualization':
         st.pyplot(fig)
 
 elif selected == "Prediction":
+    df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
     st.title("Predicting Housing Prices 💡")
     numeric_columns = df.select_dtypes(include=[np.number]).columns
     features = st.multiselect("Select Features for Prediction", numeric_columns)
