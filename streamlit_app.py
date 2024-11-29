@@ -27,8 +27,8 @@ df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
 
 selected = option_menu(
     menu_title=None,
-    options=["Introduction", "Visualization", "Prediction", "MLFlow", "Explainable AI", "Conclusion"],
-    icons=["house", "bar-chart-line", "lightbulb", "cloud", "robot", "check-circle"],
+    options=["Introduction", "Exploration" "Visualization", "Prediction", "MLFlow", "Explainable AI", "Conclusion"],
+    icons=["house", "search","bar-chart-line", "lightbulb", "cloud", "robot", "check-circle"],
     default_index=0,
     orientation="horizontal",
 )
@@ -56,9 +56,49 @@ if selected == 'Introduction':
     - Predictive modeling for housing prices.
     """)
 
+elif selected == 'Exploration':
+    
+    st.title("Data Exploration 🔍")
+    
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Dataset Head", "Dataset Tail", "Description", "Missing Values", "Generate Report"])
+
+    with tab1:
+        st.subheader("Head of the Dataset")
+        st.dataframe(df.head())
+
+    with tab2:
+        st.subheader("Tail of the Dataset")
+        st.dataframe(df.tail())
+
+    with tab3:
+        st.subheader("Description of the Dataset")
+        st.dataframe(df.describe())
+
+    with tab4:
+        st.subheader("Missing values")
+        dfnull = df.isnull()/len(df)*100
+        total_missing = dfnull.sum().round(2)
+        st.write(total_missing)
+        if total_missing[0] == 0.0:
+            st.success("Congrats, there are no missing values!")
+        else:
+            st.error("There are missing values.")
+
+    with tab5:
+        if st.button("Generate Report"):
+            def read_html_report(file_path):
+                with codecs.open(file_path, 'r', encoding="utf-8") as f:
+                    return f.read()
+            
+            html_report = read_html_report('housing_report.html')
+            
+            st.title("Streamlit Quality Report")
+            st.components.v1.html(html_report, height=1000, scrolling=True)
+
+
 elif selected == 'Visualization':
     st.title("Data Visualization 📊")
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Price Distribution", "Geographic Heatmap", "Correlation Heatmap", "Feature Relationships", "Generate Report"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Price Distribution", "Geographic Heatmap", "Correlation Heatmap", "Feature Relationships"])
 
     with tab1:
         st.subheader("Price Distribution")
@@ -127,18 +167,6 @@ elif selected == 'Visualization':
         sns.scatterplot(data=df, x=x_feature, y=y_feature, ax=ax)
         ax.set_title(f"Relationship Between {x_feature} and {y_feature}")
         st.pyplot(fig)
-
-    with tab5:
-        if st.button("Generate Report"):
-            def read_html_report(file_path):
-                with codecs.open(file_path, 'r', encoding="utf-8") as f:
-                    return f.read()
-            
-            html_report = read_html_report('housing_report.html')
-            
-            st.title("Streamlit Quality Report")
-            st.components.v1.html(html_report, height=1000, scrolling=True)
-
 
 elif selected == "Prediction":
     st.title("Predicting Housing Prices 💡")
