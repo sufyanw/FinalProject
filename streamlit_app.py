@@ -15,13 +15,13 @@ st.set_page_config(page_title='Housing Crisis App')
 
 df = pd.read_csv("housing.csv")
 
-# import dagshub
-# dagshub.init(repo_owner='sufyanw', repo_name='FinalProject', mlflow=True)
+import dagshub
+dagshub.init(repo_owner='sufyanw', repo_name='FinalProject', mlflow=True)
 
-# import mlflow
-# with mlflow.start_run():
-#   mlflow.log_param('parameter name', 'value')
-#   mlflow.log_metric('metric name', 1)
+import mlflow
+with mlflow.start_run():
+  mlflow.log_param('parameter name', 'value')
+  mlflow.log_metric('metric name', 1)
 
 
 selected = option_menu(
@@ -201,10 +201,83 @@ elif selected == "MLFlow":
     - Experiment runs and parameters.
     - Performance metrics (MAE, R² Score).
     - Model artifacts for reproducibility.
-    
-    ### How to Access
-    Visit the [MLFlow Dashboard] for detailed experiment tracking.
     """)
+
+    MODELS = {
+        "regression": {
+            "Linear Regression": LinearRegression,
+        }
+    }
+
+    task_type = "regression"
+
+    st.write("### Housing Data Overview")
+    st.dataframe(df)
+
+    model_options = list(MODELS[task_type].keys())
+    model_choice = st.selectbox("Choose a model ⚙️", model_options)
+    numeric_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+    feature_choice = st.multiselect("Select Features for Prediction", numeric_columns)
+    target_choice = st.selectbox("Select Target Variable", ["median_house_value"])
+
+    track_with_mlflow = st.checkbox("Track with MLflow?")
+
+    if st.button("Start Training"):
+        if not feature_choice or not target_choice:
+            st.error("Please select features and a target variable before training.")
+        else:
+            if track_with_mlflow:
+                if mlflow.active_run():
+                    mlflow.end_run()
+                mlflow.set_experiment("Housing_Price_Prediction")
+            with mlflow.start_run():
+                if track_with_mlflow:
+                    mlflow.log_param("model", model_choice)
+                    mlflow.log_param("features", feature_choice)
+
+                model = MODELS[task_type][model_choice]()
+                X = df[feature_choice]
+                y = df[target_choice]
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+                model.fit(X_train, y_train)
+
+                preds_train = model.predict(X_train)
+                preds_test = model.predict(X_test)
+                mae_train = metrics.mean_absolute_error(y_train, preds_train)
+                mae_test = metrics.mean_absolute_error(y_test, preds_test)
+                r2_train = metrics.r2_score(y_train, preds_train)
+                r2_test = metrics.r2_score(y_test, preds_test)
+
+                st.write("### Training Metrics")
+                st.write(f"MAE (Train): {mae_train:.2f}")
+                st.write(f"MAE (Test): {mae_test:.2f}")
+                st.write(f"R² (Train): {r2_train:.2f}")
+                st.write(f"R² (Test): {r2_test:.2f}")
+
+                if track_with_mlflow:
+                    mlflow.log_metric("MAE_train", mae_train)
+                    mlflow.log_metric("MAE_test", mae_test)
+                    mlflow.log_metric("R2_train", r2_train)
+                    mlflow.log_metric("R2_test", r2_test)
+                    mlflow.sklearn.log_model(model, "model")
+
+            with open('housing_model.pkl', 'wb') as file:
+                pickle.dump(model, file)
+
+    def download_file():
+        file_path = 'housing_model.pkl'
+        with open(file_path, 'rb') as file:
+            contents = file.read()
+        b64 = base64.b64encode(contents).decode()
+        href = f'<a href="data:file/pkl;base64,{b64}" download="housing_model.pkl">Download housing_model.pkl</a>'
+        st.markdown(href, unsafe_allow_html=True)
+
+    st.title("Download Model Example")
+    st.write("Click the button below to download the housing_model.pkl file.")
+    if st.button("Download"):
+        download_file()
+
 
 elif selected == "Explainable AI":
     st.title("Explainable AI 🔎🤖")
