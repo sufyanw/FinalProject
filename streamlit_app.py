@@ -280,7 +280,7 @@ ion uses **Shapash**, an explainability library, to provide insights into the pr
     )
 
     xpl = SmartExplainer(model=model)
-    xpl.compile(x=X_test, y_pred=model.predict(X_test), features_dict={col: col for col in X.columns})
+    xpl.compile(x=X_test, y_pred=model.predict(X_test))
 
     if option == 'Feature Importance':
         st.write("### Feature Importance")
