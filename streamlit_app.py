@@ -21,14 +21,6 @@ st.set_page_config(page_title='Housing Crisis App')
 
 df = pd.read_csv("housing.csv")
 
-import dagshub
-dagshub.init(repo_owner='sufyanw', repo_name='FinalProject', mlflow=True)
-
-import mlflow
-with mlflow.start_run():
-  mlflow.log_param('parameter name', 'value')
-  mlflow.log_metric('metric name', 1)
-
 
 selected = option_menu(
     menu_title=None,
@@ -253,6 +245,8 @@ elif selected == "MLFlow":
     - Performance metrics (MAE, R² Score).
     - Model artifacts for reproducibility.
     """)
+    import dagshub
+    import mlflow
     import streamlit_shadcn_ui as ui
     ui.link_button(text=":point_right: Go to ML Flow",url="https://dagshub.com/sufyanw/FinalProject.mlflow/#/experiments/0?searchFilter=&orderByKey=attributes.start_time&orderByAsc=false&startTime=ALL&lifecycleFilter=Active&modelVersionFilter=All+Runs&datasetsFilter=W10%3D",key="link_btnmlflow")
 
