@@ -213,7 +213,7 @@ elif selected == "MLFlow":
     import dagshub
     import mlflow
     import streamlit_shadcn_ui as ui
-    ui.link_button(text=":point_right: Go to ML Flow",url="https://dagshub.com/sufyanw/FinalProject.mlflow/#/experiments/0?searchFilter=&orderByKey=attributes.start_time&orderByAsc=false&startTime=ALL&lifecycleFilter=Active&modelVersionFilter=All+Runs&datasetsFilter=W10%3D",key="link_btnmlflow")
+    ui.link_button(text="👉 Go to ML Flow",url="https://dagshub.com/sufyanw/FinalProject.mlflow/#/experiments/0?searchFilter=&orderByKey=attributes.start_time&orderByAsc=false&startTime=ALL&lifecycleFilter=Active&modelVersionFilter=All+Runs&datasetsFilter=W10%3D",key="link_btnmlflow")
 
 elif selected == "Explainable AI":
     st.title("Explainable AI 🔎🤖")
