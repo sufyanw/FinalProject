@@ -196,8 +196,30 @@ elif selected == "Prediction":
             st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
             st.write(f"R² Score: {r2:.2f}")
     
-    with tab2:
-        st.write(f"hello")
+            with tab2:
+                st.title("Decision Tree 🌳")
+                numeric_columns = df.select_dtypes(include=[np.number]).columns
+                features = st.multiselect("Select Features for Prediction", numeric_columns, key="dt_features")
+                target = st.selectbox("Select Target Variable", ["median_house_value"], key="dt_target")
+
+                if features:
+                    X = df[features]
+                    y = df[target]
+                    test_size = st.slider("Test Size (%)", 10, 50, 20, key="dt_test_size") / 100
+                    max_depth = st.slider("Max Depth of Tree", 1, 20, 5, key="dt_max_depth")
+                    random_state = st.number_input("Random State (optional)", value=0, min_value=0, key="dt_random_state")
+                    
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+                    model = DecisionTreeClassifier(max_depth=max_depth, random_state=random_state)
+                    model.fit(X_train, y_train)
+                    predictions = model.predict(X_test)
+
+                    accuracy = accuracy_score(y_test, predictions)
+                    confusion = confusion_matrix(y_test, predictions)
+
+                    st.write("### Prediction Results")
+                    st.write(f"Accuracy: {accuracy:.2f}")
 
 
 
