@@ -197,42 +197,7 @@ elif selected == "Prediction":
             st.write(f"R² Score: {r2:.2f}")
     
     with tab2:
-        X = df.drop(["median_house_value"],axis=1)
-        y = df.median_house_value # Target variable
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
-        
-        clf = DecisionTreeClassifier(random_state=42)
-        clf.fit(X_train, y_train)
-        
-        y_pred = clf.predict(X_test)
-        accuracy = accuracy_score(y_test, y_pred)
-        
-        st.write("### Decision Tree Results")
-        st.write(f"Accuracy: {accuracy:.2f}")
-        
-        st.write("### Classification Report")
-        st.text(classification_report(y_test, y_pred))
-        
-        st.write("### Confusion Matrix")
-        cm = confusion_matrix(y_test, y_pred)
-        fig, ax = plt.subplots(figsize=(6, 6))
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", cbar=False, ax=ax)
-        ax.set_title("Confusion Matrix")
-        st.pyplot(fig)
-
-        import graphviz
-        from sklearn.tree import export_graphviz
-        
-        feature_cols = X.columns
-        dot_data = export_graphviz(clf, out_file=None,
-                                   feature_names=feature_cols,
-                                   class_names=[str(i) for i in np.unique(y)],
-                                   filled=True, rounded=True,
-                                   special_characters=True)
-
-        graph = graphviz.Source(dot_data)
-        st.subheader("Decision Tree Visualization")
-        st.graphviz_chart(dot_data) 
+        st.write(f"hello")
 
 
 
