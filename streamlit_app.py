@@ -179,6 +179,7 @@ elif selected == "Prediction":
     st.title("Predicting Housing Prices and Categories 💡")
     
     tab1, tab2 = st.tabs(["Linear Regression", "Decision Tree"])
+    df['ocean_proximity'].fillna('Unknown', inplace=True)
     
     with tab1:
         numeric_columns = df.select_dtypes(include=[np.number]).columns
