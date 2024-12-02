@@ -181,6 +181,7 @@ elif selected == "Prediction":
     
     with tab1:
         numeric_columns = df.select_dtypes(include=[np.number]).columns
+        numeric_columns = numeric_columns.drop('median_house_value')
         features = st.multiselect("Select Features for Prediction", numeric_columns)
         target = st.selectbox("Select Target Variable", ["median_house_value"])
 
@@ -203,6 +204,8 @@ elif selected == "Prediction":
             st.write(f"R² Score: {r2:.2f}")
     
     with tab2:
+        X = df.drop(["median_house_value"],axis=1)
+        y = df.median_house_value # Target variable
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
         
         clf = DecisionTreeClassifier(random_state=42)
