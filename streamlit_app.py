@@ -80,6 +80,7 @@ elif selected == 'Exploration':
         st.dataframe(df.describe())
 
     with tab4:
+        df['total_bedrooms'].fillna(df['total_bedrooms'].median(), inplace=True)
         st.subheader("Missing values")
         dfnull = df.isnull()/len(df)*100
         total_missing = dfnull.sum().round(2)
@@ -181,7 +182,6 @@ elif selected == "Prediction":
     
     with tab1:
         numeric_columns = df.select_dtypes(include=[np.number]).columns
-        numeric_columns = numeric_columns.drop('median_house_value')
         features = st.multiselect("Select Features for Prediction", numeric_columns)
         target = st.selectbox("Select Target Variable", ["median_house_value"])
 
