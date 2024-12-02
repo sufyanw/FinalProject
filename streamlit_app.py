@@ -240,9 +240,38 @@ elif selected == "MLFlow":
 elif selected == "Explainable AI":
     st.title("Explainable AI 🔎🤖")
     st.write("""
-    This pip install shapash
-ion uses **Shapash**, an explainability library, to provide insights into the predictions made by the housing price prediction model.
+    This section uses **Shapash**, an explainability library, to provide insights into the predictions made by the housing price prediction model.
     """)
+
+    from shapash.explainer.smart_explainer import SmartExplainer
+
+    df.fillna(-1, inplace=True)
+    numeric_columns = df.select_dtypes(include=[np.number]).columns
+    features = st.multiselect("Select Features for Explainability", numeric_columns, key="xai_features")
+    target = st.selectbox("Select Target Variable", ["median_house_value"], key="xai_target")
+
+    if features:
+        X = df[features]
+        y = df[target]
+        test_size = st.slider("Test Size (%)", 10, 50, 20, key="xai_test_size") / 100
+        random_state = st.number_input("Random State (optional)", value=0, min_value=0, key="xai_random_state")
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        model = DecisionTreeClassifier(random_state=random_state)
+        model.fit(X_train, y_train)
+
+        explainer = SmartExplainer(model=model)
+        explainer.compile(x=X_test, y_pred=model.predict(X_test), features_dict={i: i for i in features})
+
+        st.write("### Global Explainability")
+        global_explainability = explainer.plot.features_importance()
+        st.pyplot(global_explainability)
+
+        st.write("### Local Explainability")
+        selected_index = st.slider("Select an Index for Explanation", 0, len(X_test) - 1, 0)
+        local_explainability = explainer.plot.local_plot(index=selected_index)
+        st.pyplot(local_explainability)
+
 
 
 elif selected == 'Conclusion':
