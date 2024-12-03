@@ -12,9 +12,9 @@ from sklearn import metrics
 from streamlit_option_menu import option_menu
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import confusion_matrix, classification_report
 
 st.set_page_config(page_title='Housing Crisis App')
@@ -211,12 +211,11 @@ elif selected == "Prediction":
                     
                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
 
-                    model = DecisionTreeClassifier(max_depth=max_depth, random_state=random_state)
+                    model = DecisionTreeRegressor(max_depth=max_depth, random_state=random_state)
                     model.fit(X_train, y_train)
                     predictions = model.predict(X_test)
 
-                    accuracy = accuracy_score(y_test, predictions)
-                    confusion = confusion_matrix(y_test, predictions)
+                    accuracy = mean_absolute_error(y_test, predictions)
 
                     st.write("### Prediction Results")
                     st.write(f"Accuracy: {accuracy:.2f}")
@@ -257,21 +256,22 @@ elif selected == "Explainable AI":
         random_state = st.number_input("Random State (optional)", value=0, min_value=0, key="xai_random_state")
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
 
-        model = DecisionTreeClassifier(random_state=random_state)
+        model = DecisionTreeRegressor(random_state=random_state)
         model.fit(X_train, y_train)
 
         explainer = SmartExplainer(model=model)
-        explainer.compile(x=X_test, y_pred=model.predict(X_test), features_dict={i: i for i in features})
+        y_pred = model.predict(X_test)
+        y_pred_series = pd.Series(y_pred, index=X_test.index, name="Predictions")
+        explainer.compile(x=X_test, y_pred = y_pred_series)
 
         st.write("### Global Explainability")
-        global_explainability = explainer.plot.features_importance()
-        st.pyplot(global_explainability)
+        importance_plot = explainer.plot.features_importance()
+        st.plotly_chart(importance_plot, use_container_width=True)
 
         st.write("### Local Explainability")
         selected_index = st.slider("Select an Index for Explanation", 0, len(X_test) - 1, 0)
         local_explainability = explainer.plot.local_plot(index=selected_index)
-        st.pyplot(local_explainability)
-
+        st.plotly_chart(local_explainability, use_container_width=True)
 
 
 elif selected == 'Conclusion':
