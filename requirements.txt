@@ -1,0 +1,13 @@
+streamlit
+pandas
+numpy
+pillow
+seaborn
+matplotlib
+scikit-learn
+streamlit-option-menu
+pydeck
+dagshub
+mlflow
+shapash
+streamlit_shadcn_ui
