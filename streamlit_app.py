@@ -193,6 +193,8 @@ elif selected == "Prediction":
             r2 = metrics.r2_score(y_test, predictions)
             
             st.write("### Prediction Results")
+            avg_predicted_price = np.mean(predictions) 
+            st.write("Average Predicted House Price:", round(avg_predicted_price, 2))
             st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
             st.write(f"R² Score: {r2:.2f}")
     
@@ -218,6 +220,8 @@ elif selected == "Prediction":
             mae = mae/100000
             r2 = metrics.r2_score(y_test, predictions)
             st.write("### Prediction Results")
+            avg_predicted_price = np.mean(predictions)
+            st.write("Average Predicted House Price:", round(avg_predicted_price, 2))
             st.write(f"Mean Absolute Error (MAE): {mae:.2f}")
             st.write(f"R² Score: {r2:.2f}")
 
